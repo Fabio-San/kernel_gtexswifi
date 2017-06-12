@@ -10,7 +10,7 @@ dtimg="dt.img"
 status="none"
 declare -a dts_array
 
-TOOL_DTC_FOLDER=$(pwd)/scripts/dtc
+TOOL_DTC_FOLDER=$(pwd)/build/scripts/dtc
 TOOL_DTC=$TOOL_DTC_FOLDER/dtc
 TOOL_DTBTOOL=$(pwd)/scripts/dtbTool
 
@@ -58,5 +58,4 @@ for dts_file in ${dts_array[@]}; do
 	fi
 done
 
-$TOOL_DTBTOOL -o $(pwd)/arch/arm/boot/$dtimg $(pwd)/arch/arm/boot/dts/ -p $TOOL_DTC_FOLDER/
-
+$TOOL_DTBTOOL -o $(pwd)/arch/arm/boot/$dtimg $(pwd)/build/arch/arm/boot/dts/ -p $TOOL_DTC_FOLDER/

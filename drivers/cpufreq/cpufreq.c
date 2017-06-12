@@ -51,7 +51,6 @@ static DEFINE_PER_CPU(struct cpufreq_policy *, cpufreq_cpu_data);
 static DEFINE_PER_CPU(char[CPUFREQ_NAME_LEN], cpufreq_cpu_governor);
 #endif
 static DEFINE_RWLOCK(cpufreq_driver_lock);
-static DEFINE_MUTEX(cpufreq_governor_lock);
 
 /* Flag to suspend/resume CPUFreq governors */
 static bool cpufreq_suspended;
@@ -1649,10 +1648,7 @@ try_again:
 		goto try_again;
 	}
 
-	mutex_lock(&cpufreq_governor_lock);
-
 	if (is_governor_busy(policy)) {
-		mutex_unlock(&cpufreq_governor_lock);
 		cond_resched();
 		goto try_again;
 	}
@@ -1664,15 +1660,12 @@ try_again:
 	    || (state == CPUFREQ_GOV_STOP && event != CPUFREQ_GOV_START && event != CPUFREQ_GOV_POLICY_EXIT)
 	    || (state == CPUFREQ_GOV_POLICY_INIT && event != CPUFREQ_GOV_START && event != CPUFREQ_GOV_POLICY_EXIT)
 	    || (state == CPUFREQ_GOV_POLICY_EXIT && event != CPUFREQ_GOV_POLICY_INIT)) {
-		mutex_unlock(&cpufreq_governor_lock);
 		return -EBUSY;
 	}
 
 	set_governor_busy(policy, true);
 	if (event != CPUFREQ_GOV_LIMITS)
 		policy->governor_state = event;
-
-	mutex_unlock(&cpufreq_governor_lock);
 
 	ret = policy->governor->governor(policy, event);
 
@@ -1683,10 +1676,8 @@ try_again:
 			policy->governor->initialized--;
 	} else {
 		/* Restore original values */
-		mutex_lock(&cpufreq_governor_lock);
 		if (event != CPUFREQ_GOV_LIMITS)
 			policy->governor_state = state;
-		mutex_unlock(&cpufreq_governor_lock);
 	}
 
 	/* we keep one module reference alive for
@@ -1696,9 +1687,7 @@ try_again:
 	if ((event == CPUFREQ_GOV_STOP) && !ret)
 		module_put(policy->governor->owner);
 
-	mutex_lock(&cpufreq_governor_lock);
 	set_governor_busy(policy, false);
-	mutex_unlock(&cpufreq_governor_lock);
 	return ret;
 }
 

@@ -7,7 +7,7 @@
 
 set -e -o pipefail
 
-export CROSS_COMPILE=../PLATFORM/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-
+export CROSS_COMPILE="ccache /home/hasagi/Desolation/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-"
 export ARCH=arm
 
 PLATFORM=sc8830
