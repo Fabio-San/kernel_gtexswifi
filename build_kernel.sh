@@ -14,7 +14,7 @@ PLATFORM=sc8830
 DEFCONFIG=gtexswifi-dt_defconfig
 
 KERNEL_PATH=$(pwd)
-MODULE_PATH=${KERNEL_PATH}/modules
+MODULE_PATH=~/android-work/out/target/product/gtexswifi/root/lib/
 EXTERNAL_MODULE_PATH=${KERNEL_PATH}/external_module
 
 JOBS=`grep processor /proc/cpuinfo | wc -l`
